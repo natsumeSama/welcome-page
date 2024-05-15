@@ -23,8 +23,8 @@ export default function WelcomeScreen() {
       
       <LinearGradient style={styles.container} colors={["#3884ff", "#86b4ff"]} start={{x: 0, y: 0}} end={{x: 0, y: 1}}>
         <Plane2/>
-        <Text className="font-serif text-2xl font-bold text-white" style={styles.Text}> Welcome to Fennec Land!!</Text>
-        <Text className="font-serif text-base text-slate-100 text-center mx-5" style={styles.T}>Welcome to your dream journey with Fennec Land, exploring the beauty of Algeria!</Text> 
+        <Text className="font-serif text-2xl font-bold text-white" style={styles.Text}> Welcome to Algeria Discover!!</Text>
+        <Text className="font-serif text-base text-slate-100 text-center mx-5" style={styles.T}>Welcome to your dream journey with Algeria Discover, exploring the beauty of Algeria!</Text> 
         
         <View style={styles.cont}>
           <Flatbutton  />

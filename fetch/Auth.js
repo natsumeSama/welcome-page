@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+const urlpartage="http://192.168.43.24";
+const urlhome="http://192.168.1.70";
+const url=urlhome;
 export function SignUp(username, email, password) {
     const data = { username, email, password };
-    axios.post("http://192.168.43.24:3000/auth/signup", data, {
+
+    axios.post(url+":3000/auth/signup", data, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -17,7 +21,7 @@ export function SignUp(username, email, password) {
 
 export function LogIn(email,password) {
     const data = { email, password };
-    axios.post("http://192.168.43.24:3000/auth/login", data, {
+    axios.post(url+":3000/auth/login", data, {
         headers: {
             'Content-Type': 'application/json'
         }
