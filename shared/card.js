@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View,StyleSheet, Text, Image,ImageBackground, Pressable, Animated } from 'react-native';
+import { View, StyleSheet, Text, Image, ImageBackground, Pressable, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function Card() {
+export default function Card({ image, title, location, rating }) {
   const [liked, setLiked] = useState(false);
   const scaleValue = useState(new Animated.Value(1))[0];
 
@@ -23,14 +23,13 @@ export default function Card() {
   };
 
   return (
-    <View className="flex w-72 h-96  ">
+    <View className="flex w-72 h-96">
       <StatusBar style='dark' />
      
       <ImageBackground
-        source={require('../assets/alger.jpg')}
-        resizeMode="strech"
+        source={image}
+        resizeMode="stretch"
         style={styles.background}
-        
       >
         <View className="justify-end flex-row m-2">
           <Pressable onPress={handlePress}>
@@ -44,26 +43,24 @@ export default function Card() {
           </Pressable>
         </View>
 
-        <View className=" w-64 h-24 blur-sm rounded-2xl ml-4 shadow-lg mt-52"   style={{
-            backgroundColor: 'rgba(10, 10,10, 0.5)',
-            backdropFilter: 'blur(20px)',
-          }}>
-            <View className="ml-5 my-2">
-             <Text className="text-2xl text-slate-100 italic font-bold">Maqam Shahid</Text>
-            </View>
-            <View className="flex-row -mt-2">
-             <Image source={require("../assets/local.png")}  className="w-10 h-10 "/>
-             <Text className=" text-slate-300 italic mt-3">Algiers , Alger</Text>
-             <Image source={require("../assets/star.png")}  className="w-7 h-7 mt-1 ml-14"/>
-             <Text className=" text-slate-400 italic mt-2 ml-1">4.5</Text>
-            </View>
-
+        <View className=" flex w-64 h-24 blur-sm rounded-2xl ml-4 shadow-lg mt-52" style={{
+          backgroundColor: 'rgba(10, 10, 10, 0.5)',
+          backdropFilter: 'blur(20px)',
+        }}>
+          <View className="ml-5 basis-1/2">
+            <Text className=" text-slate-100 italic font-bold text-lg">{title}</Text>
+          </View>
+          <View className="flex-row -mt-2 items-center basis-1/2">
+            <Image source={require("../assets/local.png")} className="w-10 h-10 basis-1/6" />
+            <Text className="text-slate-300 italic basis-2/6">{location}</Text>
+            <Image source={require("../assets/star.png")} className="w-10 h-10 basis-1/6" />
+            <Text className="text-slate-400 italic basis-2/6">{rating}</Text>
+          </View>
         </View>
       </ImageBackground>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   background: {

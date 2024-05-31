@@ -5,6 +5,10 @@ import SignupScreen from '../screens/SignupScreen';
 import Profile from '../screens/Profile';
 import HomeScreen from '../screens/HomeScreen';
 import Detail from '../screens/DetailCard'
+import PrivateScreen from '../screens/Privatescreen'
+import Activities from '../shared/Activities';
+import Restaurants from '../shared/Restaurants';
+import Hotels from '../shared/Hotels';
 
 
 
@@ -39,8 +43,23 @@ export default function WelcomeStack() {
      options={{headerShown:false}}
      />
      <Stack.Screen
-     name='Detail'
-     component={Detail}
+     name='activities'
+     component={Activities}
+     options={{headerShown:false}}
+     />
+     <Stack.Screen
+     name='restaurants'
+     component={Restaurants}
+     options={{headerShown:false}}
+     />
+     <Stack.Screen
+     name='hotels'
+     component={Hotels}
+     options={{headerShown:false}}
+     />
+     <Stack.Screen
+     name='Private'
+     component={PrivateScreen}
      options={{headerShown:false}}
      />
     </Stack.Navigator>
