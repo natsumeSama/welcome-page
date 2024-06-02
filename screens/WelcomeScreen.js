@@ -8,6 +8,7 @@ import Wave from '../shared/Wave';
 import Flatbutton from '../shared/bouton';
 import Flatbutton1 from '../shared/bouton1';
 import Plane2 from '../shared/Plane2';
+import { LogIn } from "../fetch/Auth";
 
 
 export default function WelcomeScreen() {
@@ -31,7 +32,12 @@ export default function WelcomeScreen() {
           <Flatbutton1/>
         </View>
         
-        <Pressable>
+        <Pressable className="w-32" 
+        onPress={() =>{
+          LogIn("Guest@guest.com","Guest")
+          navigation.navigate("Home",{email:"Guest@guest.com",userName : "Guest" })
+        }
+        }>
           <Text style={styles.guest}>Continue as a guest ?</Text>
         </Pressable>
         

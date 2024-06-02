@@ -55,7 +55,10 @@ export default function SignupScreen() {
 
               <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()} className='w-full'>
                <TouchableOpacity
-                onPress={()=>SignUp(username,email,password)}
+                onPress={()=>{
+                  SignUp(username,email,password);
+                  navigation.navigate("Login");
+                }}
                 id="SignUp"
                 className='w-full h-10 bg-green-400 rounded-2xl mb-3' >
                 <Text className="text-xl font-bold text-white text-center">SignUp</Text>

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image, ImageBackground, Pressable, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
+import { addfav,suppfav } from '../fetch/Auth';
 
-export default function Card({ image, title, location, rating }) {
-  const [liked, setLiked] = useState(false);
+export default function Card({ image, title, location, rating, fav, email, id }) {
+  const [liked, setLiked] = useState(fav);
   const scaleValue = useState(new Animated.Value(1))[0];
 
   const handlePress = () => {
@@ -20,10 +21,17 @@ export default function Card({ image, title, location, rating }) {
         useNativeDriver: true
       }).start();
     });
+    if(!liked){
+      addfav(email,id)
+    }else{
+      suppfav(email,id)
+    }
+
+
   };
 
   return (
-    <View className="flex w-72 h-96">
+    <View className="flex w-80 h-96">
       <StatusBar style='dark' />
      
       <ImageBackground

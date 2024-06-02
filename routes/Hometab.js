@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import {useRoute} from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, StyleSheet, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -56,6 +57,8 @@ const TabArr = [
 ];
 
 export default function HomeTab() {
+  const route = useRoute();
+    const { email,userName } = route.params;
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Tab.Navigator
@@ -75,6 +78,7 @@ export default function HomeTab() {
               key={index}
               name={item.route}
               component={item.component}
+              initialParams={{ email, userName }}
               options={{
                 tabBarShowLabel: false,
                 tabBarButton: (props) => <TabButton {...props} item={item} />,
