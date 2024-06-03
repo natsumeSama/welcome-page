@@ -9,6 +9,9 @@ import PrivateScreen from '../screens/Privatescreen'
 import Activities from '../shared/Activities';
 import Restaurants from '../shared/Restaurants';
 import Hotels from '../shared/Hotels';
+import Account from '../screens/Account'
+import Confidentiality from '../screens/Confidentiality'
+import Help from '../screens/Help'
 
 
 
@@ -61,6 +64,21 @@ export default function WelcomeStack() {
      name='Private'
      component={PrivateScreen}
      options={{headerShown:false}}
+     />
+     <Stack.Screen
+     name='Account'
+     component={Account}
+     options={{headerShown: true}}
+     />
+     <Stack.Screen
+     name='Confidentiality'
+     component={Confidentiality}
+     options={{headerShown: true}}
+     />
+     <Stack.Screen
+     name='Help'
+     component={Help}
+     options={{headerShown: true}}
      />
     </Stack.Navigator>
   );

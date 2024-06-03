@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, Pressable, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, Dimensions , TouchableOpacity} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Modal } from 'react-native';
 import { useNavigation ,useRoute} from '@react-navigation/native';
+import { addplan } from '../fetch/Auth';
 
 export default function Activities() {
   const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [date,setDate]=useState("");
+  const [time,setTime]=useState("");
+
+  
 
   const handlePress = () => {
     // Simulate successful plan addition (replace with actual logic)
-    setShowModal(true);
+    if(email!=="Guest@guest.com"){
+      setShowModal(true);
+      }
   };
   const route = useRoute();
-  const { item } = route.params;
+  const { item,email } = route.params;
   const i = item;
+
 
   const modalContent = (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 22 }}>
@@ -22,16 +30,17 @@ export default function Activities() {
        <Text className='text-2xl font-bold '>Add to plan</Text>
 
        <View className=' bg-black/10 p-2 rounded-2xl w-full mt-3'>
-       <TextInput placeholder="         DD/MM/YYYY           " placeholderTextColor={'gray'} />
+       <TextInput placeholder="         DD/MM/YYYY           " placeholderTextColor={'gray'} value={date} onChangeText={setDate} />
        </View>
 
        <View className=' bg-black/10 p-2 rounded-2xl w-full mt-3'>
-       <TextInput placeholder="                HH/MM               " placeholderTextColor={'gray'} />
+       <TextInput placeholder="                HH/MM               " placeholderTextColor={'gray'} value={time} onChangeText={setTime}/>
        </View>
 
        <Pressable
           style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
           onPress={() => {
+            addplan(email,i.name,date,time);
             setShowModal(false);
             
           }}
@@ -48,7 +57,6 @@ export default function Activities() {
       </View>
     </View>
   );
-
   return (
     <View className="flex-1 mt-7 bg-slate-200">
       <StatusBar style='dark' />
@@ -60,7 +68,7 @@ export default function Activities() {
 
         <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
       
-         <Text className='text-xl text-gray-600 dark:text-gray-200 italic'>{i.description}</Text>
+         <Text className='text-normale text-gray-600 dark:text-gray-200 italic'>{i.description}</Text>
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
          <Text className="text-xl font-bold text-gray-800 dark:text-white italic">name :</Text>
@@ -76,11 +84,11 @@ export default function Activities() {
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
          <Text className="text-xl font-bold text-gray-800 dark:text-white italic">openingHours :</Text>
-         <Text className='text-xl text-gray-600 dark:text-gray-200 italic'> {i.openingHours}</Text>
+         <Text  style={{ flexShrink: 1, width: '100%' }} className='text-xl text-gray-600 dark:text-gray-200 italic'> {i.openingHours}</Text>
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
       <Text className="text-xl font-bold text-gray-800 dark:text-white italic">phoneNumber :</Text>
-      <Text  className='text-xl text-blue-500 text-underline italic'> {i.phoneNumber}</Text>
+      <Text  style={{ flexShrink: 1, width: '100%' }} className='text-xl text-blue-500 text-underline italic'> {i.phoneNumber}</Text>
     </View>
 
         <Pressable

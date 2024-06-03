@@ -9,6 +9,7 @@ export default function Card({ image, title, location, rating, fav, email, id })
   const scaleValue = useState(new Animated.Value(1))[0];
 
   const handlePress = () => {
+    if(email!=="Guest@guest.com"){
     setLiked(!liked);
     Animated.spring(scaleValue, {
       toValue: 1.2,
@@ -26,7 +27,7 @@ export default function Card({ image, title, location, rating, fav, email, id })
     }else{
       suppfav(email,id)
     }
-
+  }
 
   };
 

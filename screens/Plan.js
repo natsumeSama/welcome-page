@@ -1,69 +1,70 @@
-import React from 'react';
-import {  View, FlatList,Text} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, Text, Image, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Plancard from '../shared/Plancard';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { useState,useEffect } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { userplan } from '../fetch/Auth';
+import { v4 as uuidv4 } from 'uuid';
 
-const data = [
-  {
-    id: '1',
-    image: require('../assets/alger.jpg'),
-    title: 'Maqam Shahi',
-    location: 'Algiers, Alger',
-    rating: 4.5,
-    liked: false,
-  },
-  {
-    id: '2',
-    image: require('../assets/alger.jpg'),
-    title: 'Card 2 Title',
-    location: 'Location 2',
-    rating: 4.7,
-    liked: false,
-  },
-  {
-    id: '3',
-    image: require('../assets/alger.jpg'),
-    title: 'Card 3 Title',
-    location: 'Location 3',
-    rating: 4.2,
-    liked: false,
-  },
-];
+export default function PlanScreen() {
+  const route = useRoute();
+  const { email, userName } = route.params;
+  const navigation = useNavigation();
+  const [hasFavorites, setHasFavorites] = useState(true);
+  const [userPlans, setUserPlans] = useState([]);
 
-export default function WelcomeScreen() {
-  const navigation = useNavigation(); 
-
-
-    const [showModal, setShowModal] = useState(false); // State for modal visibility
-
-  const handlePress = () => {
-    // Simulate successful plan addition (replace with actual logic)
-    setShowModal(true);
+  const handleSearch = async () => {
+    try {
+      const userResult = await userplan(email);
+      setUserPlans(userResult.plan);
+      setHasFavorites(userResult.plan.length !== 0);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+      setHasFavorites(false);
+    }
   };
 
-
+  useEffect(() => {
+    handleSearch();
+  }, []);
   return (
-    <View  className="flex-1 ">
-     <StatusBar style='dark'/>
-     <View  className="mt-8 flex-row justify-center h-16  w-fit rounded bg-yellow-500  ">
-        <Text className="font-bold text-white text-2xl mt-3">Your Collections</Text>
+    <View className="flex-1">
+      <StatusBar style="dark" />
+      <View className="flex-row mt-9 h-16 w-fit rounded bg-yellow-500">
+        <TouchableOpacity onPress={handleSearch}>
+          <Image source={require('../assets/reloadicon.png')} className="h-10 w-10 mt-3 ml-2" />
+        </TouchableOpacity>
+        <Text className="font-bold text-white text-2xl mt-3 ml-16">Your Collections</Text>
+      </View>
+      {hasFavorites ? (
+        <View className="flex-1 mt-8">
+          <View className="flex-1 items-center h-full w-screen">
+            <View className="flex-1 m-1 mb-20 rounded-lg">
+              <FlatList
+                data={userPlans}
+                renderItem={({ item }) => (
+                  <View className="flex-1 mx-auto">
+                    <Plancard
+                      id={item._id}
+                      email={email}
+                      name={item.name}
+                      date={item.date}
+                      time={item.time}
+                      className="flex-1"
+                    />
+                  </View>
+                )}
+                keyExtractor={(item) => item._id} // Utilisation de l'ID de l'élément pour la clé
+              />
+            </View>
+          </View>
         </View>
-     <View className=' flex-1  m-1  mb-20 rounded-lg'>
-     <FlatList
-  data={data}
-  renderItem={({ item }) => 
-  <View  className="mx-auto ">
-   
-          <Plancard {...item}   className=" " />
-
+      ) : (
+        <View className="flex-1">
+          <Image source={require('../assets/no-plan.png')} className="flex-1 h-screen w-screen"style={{resizeMode: 'stretch'}} />
+          
         </View>
-  }
-  keyExtractor={item => item.id}
-/>
-     </View>
+      )}
     </View>
   );
 }

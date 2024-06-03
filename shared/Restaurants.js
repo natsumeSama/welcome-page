@@ -4,16 +4,21 @@ import { StatusBar } from 'expo-status-bar';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import { Modal } from 'react-native';
 import { useNavigation ,useRoute} from '@react-navigation/native';
+import { addplan } from '../fetch/Auth';
 
 export default function WelcomeScreen() {
   const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [date,setDate]=useState("");
+  const [time,setTime]=useState("");
 
   const handlePress = () => {
     // Simulate successful plan addition (replace with actual logic)
+    if(email!=="Guest@guest.com"){
     setShowModal(true);
+    }
   };
   const route = useRoute();
-  const { item } = route.params;
+  const { item,email } = route.params;
   const i = item;
 
   const modalContent = (
@@ -22,16 +27,17 @@ export default function WelcomeScreen() {
        <Text className='text-2xl font-bold '>Add to plan</Text>
 
        <View className=' bg-black/10 p-2 rounded-2xl w-full mt-3'>
-       <TextInput placeholder="         DD/MM/YYYY           " placeholderTextColor={'gray'} />
+       <TextInput placeholder="         DD/MM/YYYY           " placeholderTextColor={'gray'} value={date} onChangeText={setDate} />
        </View>
 
        <View className=' bg-black/10 p-2 rounded-2xl w-full mt-3'>
-       <TextInput placeholder="                HH/MM               " placeholderTextColor={'gray'} />
+       <TextInput placeholder="                HH/MM               " placeholderTextColor={'gray'} value={time} onChangeText={setTime}/>
        </View>
 
        <Pressable
           style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
           onPress={() => {
+            addplan(email,i.name,date,time);
             setShowModal(false);
             
           }}
@@ -48,7 +54,6 @@ export default function WelcomeScreen() {
       </View>
     </View>
   );
-
   return (
     <View className="flex-1 mt-7 bg-slate-200">
       <StatusBar style='dark' />
@@ -67,7 +72,7 @@ export default function WelcomeScreen() {
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
          <Text className="text-xl font-bold text-gray-800 dark:text-white italic">Address :</Text>
-         <Text className='text-xl text-blue-500 dark:text-gray-200 italic'> {i.address}</Text>
+         <Text  style={{ flexShrink: 1, width: '100%' }} className='text-xl text-blue-500 dark:text-gray-200 italic'> {i.address}</Text>
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
          <Text className="text-xl font-bold text-gray-800 dark:text-white italic">Phonenumber :</Text>
@@ -75,7 +80,7 @@ export default function WelcomeScreen() {
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
          <Text className="text-xl font-bold text-gray-800 dark:text-white italic">Opening hours :</Text>
-         <Text className='text-xl text-gray-600 dark:text-gray-200 italic'> {i.openingHours}</Text>
+         <Text  style={{ flexShrink: 1, width: '100%' }} className='text-xl text-gray-600 dark:text-gray-200 italic'> {i.openingHours}</Text>
       </View>
       <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
       <Text className="text-xl font-bold text-gray-800 dark:text-white italic">Cuisine types :</Text>
@@ -84,7 +89,7 @@ export default function WelcomeScreen() {
 
     <View className='flex-row container mx-auto bg-slate-200 m-2 p-3 rounded-3xl shadow-2xl  shadow-black '>
       <Text className="text-xl font-bold text-gray-800 dark:text-white italic">Special Services :</Text>
-      <Text  className='text-xl text-gray-600 text-underline italic'> {i.specialServices}</Text>
+      <Text   style={{ flexShrink: 1, width: '100%' }} className='text-xl text-gray-600 text-underline italic'> {i.specialServices}</Text>
     </View>
 
         <Pressable

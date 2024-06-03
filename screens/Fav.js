@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image,Pressable,FlatList,Modal } from 'react-native';
+import { StyleSheet, Text, View, Image,Pressable,FlatList,Modal,TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useNavigation ,useRoute} from '@react-navigation/native';
 import { user } from '../fetch/Auth';
@@ -11,85 +11,70 @@ export default function FavScreen() {
   const route = useRoute();
   const { email,userName } = route.params;
   const navigation = useNavigation();
-  const [hasFavorites, setHasFavorites] = useState(false);
+  const [hasFavorites, setHasFavorites] = useState(true);
   const [refresh,setRefresh]= useState(false);
   const [useri,setUser]= useState([]);
 
-  const [showModal, setShowModal] = useState(false); // State for modal visibility
-    
-  const handlePress = () => {
-    // Simulate successful plan addition (replace with actual logic)
-    setShowModal(true);
-  };
+    const [showOptions, setShowOptions] = useState(false);
+    const [selectedOption, setSelectedOption] = useState('hotel');
+  
+    const handlePress = () => {
+      setShowOptions(!showOptions);
+      setData([]);
+    };
+  
+    const handleOptionPress = (option) => {
+      setSelectedOption(option);
+      setShowOptions(false);
+      handleSearch(option);
+    };
 
   
 
   const [data, setData] = useState([]);
-  const handleSearch = async () => {
+  const handleSearch = async (option) => {
     try {
       const userResult = await user(email);
       const combinedUserResults = [].concat(...userResult.fav);
       setUser(combinedUserResults);
-      
-      const favoriteResult = await favorite("activities", userResult.fav);
-      const combinedFavoriteResults = [].concat(...favoriteResult);
+  
+      const favoriteResults = await favorite(option, combinedUserResults);
+      const combinedFavoriteResults = [].concat(...favoriteResults);
       setData(combinedFavoriteResults);
-      setHasFavorites(useri.length!=0);
+      setHasFavorites(combinedFavoriteResults.length !== 0); // Correct condition for favorites
     } catch (error) {
-      console.error("Erreur lors de la recherche :", error);
+      setHasFavorites(false);
     }
   };
   
-  /*useEffect(() => {
-    const fetchDataa = async () => {
-      try {
-        const userResult = await user(email);
-        const activityResult = await favorite("activities", userResult.fav);
-        setUser(userResult.fav);
-        setData(activityResult);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données :', error);
-      }
-    };
-    const fetchDatar = async () => {
-      try {
-        const userResult = await user(email);
-        const activityResult = await favorite("restaurants", userResult.fav);
-        setUser(userResult.fav);
-        setData(activityResult);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données :', error);
-      }
-    };
-    const fetchDatah = async () => {
-      try {
-        const userResult = await user(email);
-        const activityResult = await favorite("hotels", userResult.fav);
-        setUser(userResult.fav);
-        setData(activityResult);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données :', error);
-      }
-    };
-    fetchDataa();
-    fetchDatar();
-    fetchDatah();
-    setHasFavorites(useri.length!=0);
-  }, [email]);*/
-  console.log(data);
   
 
   return (
     <View className="flex-1 bg-white ">
       <StatusBar style='dark' />
       <View className="flex-1 mb-16">
-        <View className="mt-8 flex-row justify-center h-16 w-fit rounded bg-red-500">
-          <Pressable onPress={handleSearch}>
-          <Text className="font-bold text-white text-2xl mt-3">Your Collections</Text>
-          </Pressable>
-          
-          
+      <View style={styles.container}>
+      <View className='flex-row  mt-9 h-16  w-fit rounded bg-red-500'>
+        <TouchableOpacity onPress={handlePress}>
+          <Image source={require('../assets/option.png')} className='h-10 w-10 mt-3 ml-2'/>
+        </TouchableOpacity>
+        <Text className="font-bold text-white text-2xl mt-3 ml-16">Your Collections</Text>
+      </View>
+      {showOptions && (
+        <View classn="flex-row" style={styles.optionsContainer}>
+          <TouchableOpacity style={styles.option} onPress={() => handleOptionPress('hotels')}>
+            <Image source={require("../assets/hotel.png")} className='h-8 w-8 m-1'/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option} onPress={() => handleOptionPress('restaurants')}>
+            <Image source={require("../assets/restaurant.png")} className='h-8 w-8 m-1'/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option} onPress={() => handleOptionPress('activities')}>
+            <Image source={require("../assets/activities.png")} className='h-8 w-8 m-1'/>
+          </TouchableOpacity>
         </View>
+      )}
+      
+    </View>
         {hasFavorites ? (
           // Affichage si hasFavorites est true
           <View className="flex-1 mt-8">
@@ -100,7 +85,7 @@ export default function FavScreen() {
             <View className=' mt-4'>
               <Pressable
                 style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-                onPress={() => navigation.navigate(choix, { item })}
+                onPress={() => navigation.navigate(selectedOption, { item:item,email:email })}
               >
                 <Card
                   image={{ uri: item.image }}
@@ -121,7 +106,7 @@ export default function FavScreen() {
         ) : (
           // Affichage si hasFavorites est false
           <View className="mt-8">
-            <Image source={require('../assets/favicon.png')} className="mt-44 ml-7" />
+            <Image source={require('../assets/favyet.jpg')} className="mt-44 ml-7" />
             <Text className="mb-2 font-semibold text-center text-lg">No Favorites yet</Text>
             <Text className="px-5 text-slate-500 text-center">Keep track of the listing you're interested in by clicking the Heart Icon</Text>
           </View>
@@ -131,3 +116,24 @@ export default function FavScreen() {
   );
 }
 
+const styles = StyleSheet.create({
+  optionsContainer: {
+    position: 'absolute',
+    top: 50,
+    left: 5,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 10,
+  },
+  option: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  selectedOption: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
+  },
+});

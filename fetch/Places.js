@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const urlpartage = "http://192.168.43.24";
+const urlpartage = "http://192.168.168.90";
 const urlhome = "http://192.168.1.70";
-const url = urlhome;
+const url = urlpartage;
 
 export async function trouver(type,v) {
     try {
@@ -32,19 +32,22 @@ export async function search(type,name) {
 
 export async function favorite(type, ids) {
     try {
-        const promises = ids.map(async id => {
-            const response = await axios.get(`${url}:3000/${type}/fav/${id}`, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            return response.data;
-        });
-
-        const results = await Promise.all(promises);
-        return results;
+      const promises = ids.map(async id => {
+        try {
+          const response = await axios.get(`${url}:3000/${type}/fav/${id}`, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          return response.data;
+        } catch (error) {
+          return null; // Return null or any default value in case of error
+        }
+      });
+  
+      const results = await Promise.all(promises);
+      return results.filter(result => result !== null); // Filter out null results
     } catch (error) {
-        
+      return [];
     }
-}
-
+  }

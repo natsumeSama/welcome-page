@@ -9,6 +9,7 @@ import { trouver } from '../fetch/Places';
 import { user } from '../fetch/Auth';
 import { TextInput } from 'react-native-gesture-handler';
 import { Modal } from 'react-native';
+import { search } from '../fetch/Places';
 
 
 export default function PrivateScreen() {
@@ -17,6 +18,7 @@ export default function PrivateScreen() {
     const W = wilaya;
     const navigation = useNavigation();
     const [choix, setChoix] = useState("activities");
+    const [s, setSearch] = useState('');
     const [showModal, setShowModal] = useState(false); // State for modal visibility
     
   const handlePress = () => {
@@ -102,19 +104,35 @@ export default function PrivateScreen() {
 
   
   const u=[1,2,3,4];
-  console.log(useri);
+
+  const handleSearch = () => {
+    search(choix,s)
+      .then(results => {
+        // Combine results from all search functions
+        const combinedResults = [].concat(...results);
+        setData(combinedResults);
+      })
+      .catch(error => {
+        
+        console.log("Not Found");
+      });
+  };
 
 
   return (
     <View className="flex-1">
     <LinearGradient  colors={["#0aaaff", "#0ff0F1", "#0f00f2"]}className="flex-1">
      <View className='items-center'>
-     <View className='flex-row justify-center mt-14 border h-11 w-96 rounded-2xl' >
-          <Text className='text-base font-semibold italic p-1'>{choix}</Text>
-      </View>
-     <View className="mt-5 mb-5 border-1 bg-slate-100  w-80 h-14  rounded-3xl mx-4  flex-row">
-         <TextInput placeholder='Search & filter Here' className=" ml-2 w-60 "/>
-         <View className="border h-11 mt-1"></View>
+     <View className="mt-14 mb-5 border-1 bg-slate-100  w-80 h-14  rounded-3xl mx-4  flex-row">
+     <TextInput placeholder='Search Here' className=" ml-2 w-48" value={s} onChangeText={setSearch}/>
+         <View className="border h-10 mt-1"></View>
+         <Pressable  style={({pressed}) =>{ 
+        return{opacity : pressed ? 0.4 : 1}
+       }}
+       onPress={handleSearch}
+       >
+          <Image source={require("../assets/chercher.png")} className="h-10 w-10 m-1 ml-2"/>
+         </Pressable>
          <Pressable style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
           onPress={handlePress} // Call handlePress on button press
        >
@@ -131,7 +149,7 @@ export default function PrivateScreen() {
             <View className=' mt-4'>
               <Pressable
                 style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-                onPress={() => navigation.navigate(choix, { item })}
+                onPress={() => navigation.navigate(choix, { item:item,email:email })}
               >
                 <Card
                   image={{ uri: item.image }}

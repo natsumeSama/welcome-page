@@ -3,11 +3,12 @@ import { StyleSheet,FlatList, Text, View, Image, Pressable, Dimensions } from 'r
 import { StatusBar } from 'expo-status-bar';
 import Card from '../shared/card';
 import { TextInput } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation} from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {useRoute} from '@react-navigation/native';
 import { search} from '../fetch/Places';
-import { useState } from 'react';
+import { user } from '../fetch/Auth';
+import { useState,useEffect  } from 'react';
 import { Modal } from 'react-native';
 
 
@@ -18,6 +19,7 @@ export default function Feed() {
   const navigation = useNavigation(); 
   const [s, setSearch] = useState('');
   const [choix, setChoix] = useState("activities");
+  const [found, setFound] = useState(true)
 
     const [showModal, setShowModal] = useState(false); // State for modal visibility
     
@@ -72,6 +74,22 @@ export default function Feed() {
       </View>
     </View>
   );
+
+  const [useri,setUser]= useState([]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await user(email);
+        setUser(result.fav);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données :', error);
+      }
+    };
+
+    fetchData();
+  }, [email]);
+
   const [data, setData] = useState([{
     "_id": "6634030c851b182551539881",
     "name": "Cap Carbon",
@@ -85,7 +103,6 @@ export default function Feed() {
     "v": "06",
     "__v": 0,
     rating: 4.5,
-    liked: false,
   },
   {
     "_id": "663623e3ecb2a9bfd2b99c96",
@@ -100,7 +117,6 @@ export default function Feed() {
     "v": "16",
     "__v": 0,
     rating: 4.7,
-    liked: false,
   },
   {
     "_id": "66353f5d72c00693895f1070",
@@ -114,7 +130,6 @@ export default function Feed() {
     "image": "https://i.imgur.com/XtHYNEW.jpeg",
     "v": "16",
     rating: 4.2,
-    liked: false,
   }]);
 
 
@@ -125,8 +140,10 @@ export default function Feed() {
         // Combine results from all search functions
         const combinedResults = [].concat(...results);
         setData(combinedResults);
+        setFound(combinedResults.length !== 0);
       })
       .catch(error => {
+        
         console.log("Not Found");
       });
   };
@@ -148,7 +165,12 @@ export default function Feed() {
         return{opacity : pressed ? 0.4 : 1}
        }}
        onPress={()=>{
-        navigation.navigate("Profile",{email: email,userName: userName})
+        if(email !== "Guest@guest.com"){
+          navigation.navigate("Profile",{email: email,userName: userName});
+        }else{
+          console.warn("you need to have an account");
+          navigation.navigate("welcome");
+        }
        }}>
        
         <Image source={require("../assets/pfp.png")} className=" rounded-full w-16 h-16 ml-24 -mt-10"/>
@@ -178,9 +200,10 @@ export default function Feed() {
       </View>
 
        <View 
-          className=' flex-auto   mt-5 h-full w-full bg-teal-100'
+          className=' flex-auto   mt-5 h-full w-full bg-white'
        >
         <View className="flex-1 items-center">
+          { found ?(
         <FlatList
           horizontal={true}
           data={data}
@@ -188,20 +211,28 @@ export default function Feed() {
             <View className=' mt-20 mx-4'>
               <Pressable
                 style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
-                onPress={() => navigation.navigate(choix, { item })}
+                onPress={() => navigation.navigate(choix, { item:item,email:email })}
               >
                 <Card
                   image={{ uri: item.image }}
                   title={item.name}
                   location={item.address}
                   rating="4.5"
-                  liked={false} // You can manage liked state here
+                  email={email}
+                  id={item._id}
+                  liked={useri.includes(item._id)} // You can manage liked state here
                 />
               </Pressable>
             </View>
           )}
           keyExtractor={item => item._id} // Utiliser l'id correct de votre base de données
         />
+          ) : (
+            <View className="flex-1 justify-center mb-24">
+            <Image source={require('../assets/no-result.png')} className="" />
+          </View>
+          )
+}
      </View>
      <Modal // Render modal conditionally
         animationType="fade"
